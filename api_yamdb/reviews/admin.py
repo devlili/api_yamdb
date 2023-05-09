@@ -1,9 +1,9 @@
 from django.contrib import admin
 from reviews.models import Genres, Categories, Titles
 
-admin.register(Genres)
-admin.register(Categories)
-admin.register(Titles)
+admin.site.register(Genres)
+admin.site.register(Categories)
+admin.site.register(Titles)
 
 
 class GenresAdmin(admin.ModelAdmin):
