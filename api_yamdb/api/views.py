@@ -1,4 +1,4 @@
-from api.permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
+from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
 from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -30,7 +30,7 @@ class GenresViewSet(
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
-    permission_classes = (IsAdminPermission,)
+    #permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         if not Genres.objects.filter(slug=slug).count():
@@ -45,7 +45,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
-    permission_classes = (IsAdminPermission,)
+    #permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -55,19 +55,16 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
-    # queryset = Titles.objects.annotate(
-    #     rating=Avg("reviews__score", output_field=PositiveSmallIntegerField())
-    # )
-    # pagination_class = PageNumberPagination
-    # filter_backends = (DjangoFilterBackend,)
-    # filterset_fields = ("category", "genre", "name", "year")
-    # permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
+    queryset = Titles.objects.all()
+    pagination_class = PageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("category", "genre", "name", "year")
+    #permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
 
-    # def get_serializer_class(self):
-    #     if self.action in ("create", "update", "partial_update"):
-    #         return TitlesPostSerializer
-    #     return TitlesBaseSerializer
-    pass
+    def get_serializer_class(self):
+        if self.action in ("create", "update", "partial_update"):
+            return TitlesPostSerializer
+        return TitlesBaseSerializer
 
 
 class CommentViewSet(viewsets.ModelViewSet):
