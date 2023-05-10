@@ -129,25 +129,24 @@ class Titles(models.Model):
     def ___str__(self) -> str:
         return self.name
 
+    # class Rating(models.Model):
+    #     title = models.ForeignKey(
+    #         Titles,
+    #         on_delete=models.CASCADE,
+    #         related_name="rating",
+    #         verbose_name="Произведение",
+    #     )
 
-class Rating(models.Model):
-    title = models.ForeignKey(
-        Titles,
-        on_delete=models.CASCADE,
-        related_name="rating",
-        verbose_name="Произведение",
-    )
-
-    @property
-    def average_rating(self):
-        return (
-            int(
-                Review.objects.filter(title=self).aggregate(
-                    models.Avg("score")
-                )["score__avg"]
-            )
-            or None
-        )
+    #     @property
+    #     def average_rating(self):
+    #         return (
+    #             int(
+    #                 Review.objects.filter(title=self).aggregate(
+    #                     models.Avg("score")
+    #                 )["score__avg"]
+    #             )
+    #             or None
+    #         )
 
     class Meta:
         verbose_name = "Рейтинг"
