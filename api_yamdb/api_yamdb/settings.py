@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -24,6 +23,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'reviews',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -35,6 +35,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+} 
 
 ROOT_URLCONF = 'api_yamdb.urls'
 
@@ -67,7 +72,7 @@ DATABASES = {
     }
 }
 
-
+AUTH_USER_MODEL = 'reviews.User'
 # Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
