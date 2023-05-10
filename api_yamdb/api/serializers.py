@@ -1,8 +1,10 @@
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from reviews.models import Categories, Genres, Titles
+from reviews.models import Categories, Genres, Titles, Comment, Review
 
+from rest_framework.relations import SlugRelatedField
+ 
 
 # class ReviewSerializer(serializers.ModelSerializer):
 #     author = serializers.SlugRelatedField(
@@ -82,3 +84,23 @@ class TitlesPostSerializer(serializers.ModelSerializer):
         if 0 < value > current_year:
             raise serializers.ValidationError('Год выпуска введен неверно.')
         return value
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для объектов модели Comment."""
+
+    author = SlugRelatedField(read_only=True, slug_field="username")
+
+    class Meta:
+        fields = ("id", "text", "author", "pub_date")
+        model = Comment
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для объектов модели Review."""
+
+    author = SlugRelatedField(read_only=True, slug_field="username")
+
+    class Meta:
+        fields = ("id", "text", "author", "score", "pub_date")
+        model = Review
