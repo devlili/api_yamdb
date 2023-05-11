@@ -31,6 +31,7 @@ class GenresViewSet(
     filter_backends = (filters.SearchFilter,)
    # permission_classes = (IsAdminPermission,)
     search_fields = ("name",)
+   
 
     def retrieve(self, request, slug=None):
         if not Genres.objects.filter(slug=slug).count():
