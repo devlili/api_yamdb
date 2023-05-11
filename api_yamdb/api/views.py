@@ -1,4 +1,4 @@
-from api.permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
+from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
 from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -54,6 +54,10 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Titles.objects.all()
+    pagination_class = PageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("category", "genre", "name", "year")
+    #permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update"):
