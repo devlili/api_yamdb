@@ -1,30 +1,33 @@
 from django.contrib import admin
-from reviews.models import Genres, Categories, Titles, Comment, Rating, Review
+from reviews.models import Categories, Comment, Genres, Rating, Review, Titles
 
 
-admin.site.register(Genres)
-admin.site.register(Categories)
-admin.site.register(Titles)
-
-
+@admin.register(Genres)
 class GenresAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'slug')
-    search_fields = ('name', 'slug',)
-    list_filter = ('name', 'slug',)
+    list_display = ("pk", "name", "slug")
+    search_fields = ("name",)
+    list_filter = ("slug",)
 
 
+@admin.register(Categories)
 class CategoriesAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'slug')
-    search_fields = ('name', 'slug',)
-    list_filter = ('name', 'slug',)
+    list_display = ("pk", "name", "slug")
+    search_fields = ("name",)
+    list_filter = ("slug",)
 
 
+@admin.register(Titles)
 class TitlesAdmin(admin.ModelAdmin):
     list_display = (
-        'pk', 'name', 'year', 'rating', 'description', 'genre', 'category'
+        "pk",
+        "name",
+        "year",
+        "rating",
+        "description",
+        "category",
     )
-    search_fields = ('category', 'genre', 'name', 'year',)
-    list_filter = ('category', 'genre', 'name', 'year',)
+    search_fields = ("name",)
+    list_filter = ("year",)
 
 
 @admin.register(Comment)
@@ -43,6 +46,5 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
-    list_display = ("pk", "title")  # добавить рейтинг
+    list_display = ("pk", "title")
     search_fields = ("title",)
-    list_filter = ("",)  # добавить рейтинг
