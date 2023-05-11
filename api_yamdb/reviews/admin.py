@@ -1,23 +1,23 @@
 from django.contrib import admin
-from reviews.models import Categories, Comment, Genres, Review, Titles, User
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
-@admin.register(Genres)
-class GenresAdmin(admin.ModelAdmin):
+@admin.register(Genre)
+class GenreAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "slug")
     search_fields = ("name",)
     list_filter = ("slug",)
 
 
-@admin.register(Categories)
-class CategoriesAdmin(admin.ModelAdmin):
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "slug")
     search_fields = ("name",)
     list_filter = ("slug",)
 
 
-@admin.register(Titles)
-class TitlesAdmin(admin.ModelAdmin):
+@admin.register(Title)
+class TitleAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
         "name",
@@ -31,7 +31,7 @@ class TitlesAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("pk", "text", "title", "review", "author", "pub_date")
+    list_display = ("pk", "text", "review", "author", "pub_date")
     search_fields = ("text",)
     list_filter = ("pub_date",)
 
