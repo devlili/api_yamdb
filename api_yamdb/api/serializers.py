@@ -74,7 +74,6 @@ class TitleCreateSerializer(serializers.ModelSerializer):
             "category",
         )
 
-<<<<<<< HEAD
     def year_validator(value):
         if value < 0 or value > timezone.now().year:
             raise ValidationError(('%(value)s is not a correcrt year!'),

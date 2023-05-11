@@ -52,9 +52,11 @@ class User(AbstractUser):
         verbose_name_plural = "Пользователи"
 
     def __str__(self) -> str:
+    def __str__(self) -> str:
         return self.username
 
 
+class Category(models.Model):
 class Category(models.Model):
     name = models.CharField(
         max_length=256, unique=True,
@@ -75,6 +77,7 @@ class Category(models.Model):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
+    def __str__(self) -> str:
     def __str__(self) -> str:
         return self.name
 
@@ -97,6 +100,7 @@ class Genre(models.Model):
         max_length=50,
         unique=True,
         verbose_name="Адрес страницы",
+        verbose_name="Адрес страницы",
         validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
 >>>>>>> develop
     )
@@ -106,9 +110,11 @@ class Genre(models.Model):
         verbose_name_plural = "Жанры"
 
     def __str__(self) -> str:
+    def __str__(self) -> str:
         return self.name
 
 
+class Title(models.Model):
 class Title(models.Model):
     name = models.CharField(
         max_length=256,
@@ -123,10 +129,12 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
+        Genre,
         related_name="titles",
         verbose_name="Жанр",
     )
     category = models.ForeignKey(
+        Category,
         Category,
         on_delete=models.SET_NULL,
         null=True,
@@ -139,6 +147,7 @@ class Title(models.Model):
         verbose_name_plural = "Произведения"
 
     def __str__(self) -> str:
+    def __str__(self) -> str:
         return self.name
 
 
@@ -147,6 +156,7 @@ class Review(models.Model):
 
     text = models.TextField("Текст отзыва")
     title = models.ForeignKey(
+        Title,
         Title,
         on_delete=models.CASCADE,
         related_name="reviews",
