@@ -57,7 +57,7 @@ class User(AbstractUser):
 
 class Categories(models.Model):
     name = models.CharField(
-        max_length=256, verbose_name="Наименование категории"
+        max_length=256, unique=True, verbose_name="Наименование категории"
     )
     slug = models.SlugField(
         max_length=50,
@@ -75,12 +75,15 @@ class Categories(models.Model):
 
 
 class Genres(models.Model):
-    name = models.CharField(max_length=256, verbose_name="Наименование жанра")
+    name = models.CharField(
+        max_length=256,
+        unique=True,
+        verbose_name="Наименование жанра"
+    )
     slug = models.SlugField(
         max_length=50,
         unique=True,
         verbose_name="Адрес_страницы",
-        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
     )
 
     class Meta:
@@ -93,23 +96,26 @@ class Genres(models.Model):
 
 class Titles(models.Model):
     name = models.CharField(
-        max_length=256, verbose_name="Наименование произведения"
+        max_length=256,
+        verbose_name="Наименование произведения"
     )
-    year = models.PositiveSmallIntegerField(verbose_name="Год выпуска")
-    description = models.TextField(verbose_name="Описание", blank=True)
+    year = models.PositiveSmallIntegerField(
+        verbose_name="Год выпуска"
+    )
+    description = models.TextField(
+        verbose_name="Описание",
+        blank=True
+    )
     genre = models.ManyToManyField(
         Genres,
         related_name="titles",
-        blank=True,
-        null=True,
         verbose_name="Жанр",
     )
     category = models.ForeignKey(
         Categories,
         on_delete=models.SET_NULL,
-        related_name="titles",
-        blank=True,
         null=True,
+        related_name="titles",
         verbose_name="Категория",
     )
 

@@ -7,13 +7,12 @@ class IsAdminPermission(permissions.BasePermission):
             return True
         elif request.user.is_authenticated:
             return request.user.is_admin
-    
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
         if request.user.is_authenticated:
-            return request.user.is_admin   
+            return request.user.is_admin
 
 
 class IsAdminModeratorAuthorPermission(permissions.BasePermission):

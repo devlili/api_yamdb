@@ -2,20 +2,21 @@ from django.db.models import Avg
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-from rest_framework.validators import UniqueTogetherValidator
+from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from reviews.models import Categories, Comment, Genres, Review, Titles
+from rest_framework.exceptions import ValidationError
 
 
 class GenresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genres
-        fields = "__all__"
+        fields = ("name", "slug")
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
-        fields = "__all__"
+        fields = ("name", "slug")
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
@@ -61,13 +62,18 @@ class TitleCreateSerializer(serializers.ModelSerializer):
             "category",
         )
 
-    def validate_year(self, value):
-        current_year = timezone.now().year
-        if not 0 <= value > current_year:
-            raise serializers.ValidationError(
-                'Проверьте год создания произведения.'
-            )
-        return value
+    def year_validator(value):
+        if value < 0 or value > timezone.now().year:
+            raise ValidationError(('%(value)s is not a correcrt year!'),
+                                params={'value': value},
+                                )
+    # def validate_year(self, value):
+    #     current_year = timezone.now().year
+    #     if not 0 <= value > current_year:
+    #         raise serializers.ValidationError(
+    #             'Проверьте год создания произведения.'
+    #         )
+    #     return value
 
 
 class CommentSerializer(serializers.ModelSerializer):
