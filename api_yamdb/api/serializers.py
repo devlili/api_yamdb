@@ -8,18 +8,12 @@ from rest_framework.exceptions import ValidationError
 
 
 class GenresSerializer(serializers.ModelSerializer):
-    # name = serializers.CharField(max_length=256)
-    # slug = serializers.SlugField(max_length=50)
-
     class Meta:
         model = Genres
         fields = ("name", "slug")
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-    # name = serializers.CharField(max_length=256)
-    # slug = serializers.SlugField(max_length=50)
-
     class Meta:
         model = Categories
         fields = ("name", "slug")

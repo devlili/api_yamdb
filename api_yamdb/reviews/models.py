@@ -57,13 +57,13 @@ class User(AbstractUser):
 
 class Categories(models.Model):
     name = models.CharField(
-        max_length=256, unique=True, verbose_name="Наименование категории"
+        max_length=256, unique=True,
+        verbose_name="Наименование категории"
     )
     slug = models.SlugField(
         max_length=50,
         unique=True,
         verbose_name="Адрес_страницы",
-        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")]
     )
 
     class Meta:

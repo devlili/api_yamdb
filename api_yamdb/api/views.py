@@ -31,7 +31,6 @@ class GenresViewSet(
     filter_backends = (filters.SearchFilter,)
     permission_classes = (IsAdminPermission,)
     search_fields = ("name",)
-   
 
     def retrieve(self, request, slug=None):
         if not Genres.objects.filter(slug=slug).count():
@@ -57,7 +56,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Titles.objects.all()
-    #pagination_class = PageNumberPagination
+    pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("category", "genre", "name", "year")
     permission_classes = (IsAdminPermission,)
