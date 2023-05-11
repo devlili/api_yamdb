@@ -55,19 +55,16 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
-    # queryset = Titles.objects.annotate(
-    #     rating=Avg("reviews__score", output_field=PositiveSmallIntegerField())
-    # )
-    # pagination_class = PageNumberPagination
-    # filter_backends = (DjangoFilterBackend,)
-    # filterset_fields = ("category", "genre", "name", "year")
-    # permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
+    queryset = Titles.objects.all()
+    pagination_class = PageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("category", "genre", "name", "year")
+    permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
 
-    # def get_serializer_class(self):
-    #     if self.action in ("create", "update", "partial_update"):
-    #         return TitlesPostSerializer
-    #     return TitlesBaseSerializer
-    pass
+    def get_serializer_class(self):
+        if self.action in ("create", "update", "partial_update"):
+            return TitlesPostSerializer
+        return TitlesBaseSerializer
 
 
 class CommentViewSet(viewsets.ModelViewSet):
