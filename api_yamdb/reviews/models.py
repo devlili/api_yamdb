@@ -1,14 +1,11 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
     RegexValidator,
 )
 from django.db import models
-
-
-class ValidateCharacter(RegexValidator):
-    pass
 
 
 class User(AbstractUser):
@@ -18,25 +15,21 @@ class User(AbstractUser):
     CHOICES_ROLE = [(USER, "user"), (MODERATOR, "moderator"), (ADMIN, "admin")]
 
     username = models.CharField(
+        "Имя пользователя",
         max_length=150,
-        validators=[ValidateCharacter(regex="^[\\w.@+-]+\\z")],
         unique=True,
-        verbose_name="Имя пользователя",
+        validators=[RegexValidator(regex=r"^[\w.@+-]+\Z")],
         help_text=(
             "Required. 150 characters or fewer."
             "Letters, digits and @/./+/-/_ only."
         ),
     )
-    email = models.EmailField(max_length=254, verbose_name="E-mail")
-    first_name = models.CharField(
-        max_length=150, verbose_name="Имя", blank=True
-    )
-    last_name = models.CharField(
-        max_length=150, verbose_name="Фамилия", blank=True
-    )
-    bio = models.TextField(verbose_name="Биография", blank=True)
+    email = models.EmailField("E-mail", max_length=254, unique=True)
+    first_name = models.CharField("Имя", max_length=150, blank=True)
+    last_name = models.CharField("Фамилия", max_length=150, blank=True)
+    bio = models.TextField("Биография", blank=True)
     role = models.CharField(
-        verbose_name="Пользовательские роли",
+        "Статус пользователя",
         choices=CHOICES_ROLE,
         max_length=30,
         default=USER,
@@ -68,9 +61,9 @@ class Categories(models.Model):
     )
     slug = models.SlugField(
         max_length=50,
-        validators=[ValidateCharacter(regex="^[-a-zA-Z0-9_]+$")],
         unique=True,
         verbose_name="Адрес_страницы",
+        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")]
     )
 
     class Meta:
@@ -85,9 +78,9 @@ class Genres(models.Model):
     name = models.CharField(max_length=256, verbose_name="Наименование жанра")
     slug = models.SlugField(
         max_length=50,
-        validators=[ValidateCharacter(regex="^[-a-zA-Z0-9_]+$")],
         unique=True,
         verbose_name="Адрес_страницы",
+        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
     )
 
     class Meta:
@@ -126,33 +119,6 @@ class Titles(models.Model):
 
     def ___str__(self) -> str:
         return self.name
-
-
-class Rating(models.Model):
-    title = models.ForeignKey(
-        Titles,
-        on_delete=models.CASCADE,
-        related_name="rating",
-        verbose_name="Произведение",
-    )
-
-    @property
-    def average_rating(self):
-        return (
-            int(
-                Review.objects.filter(title=self).aggregate(
-                    models.Avg("score")
-                )["score__avg"]
-            )
-            or None
-        )
-
-    class Meta:
-        verbose_name = "Рейтинг"
-        verbose_name_plural = "Рейтинги"
-
-    def __str__(self):
-        return f"{self.title.name}: {self.rate}"
 
 
 class Review(models.Model):
