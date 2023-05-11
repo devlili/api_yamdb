@@ -31,7 +31,7 @@ class TitlesAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("pk", "text", "title", "review", "author", "pub_date")
+    list_display = ("pk", "text", "review", "author", "pub_date")
     search_fields = ("text",)
     list_filter = ("pub_date",)
 

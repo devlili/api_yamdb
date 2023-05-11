@@ -29,6 +29,7 @@ class GenresViewSet(
     lookup_field = "slug"
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
+   # permission_classes = (IsAdminPermission,)
     search_fields = ("name",)
 
     def retrieve(self, request, slug=None):
@@ -42,6 +43,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriesSerializer
     lookup_field = "slug"
     pagination_class = PageNumberPagination
+   # permission_classes = (IsAdminPermission,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
 
@@ -57,7 +59,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("category", "genre", "name", "year")
-    #permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
+  #  permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update"):

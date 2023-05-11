@@ -63,7 +63,7 @@ class TitleCreateSerializer(serializers.ModelSerializer):
 
     def validate_year(self, value):
         current_year = timezone.now().year
-        if not 0 <= value <= current_year:
+        if not 0 <= value > current_year:
             raise serializers.ValidationError(
                 'Проверьте год создания произведения.'
             )
@@ -106,3 +106,27 @@ class ReviewSerializer(serializers.ModelSerializer):
                 message="Вы уже оставили отзыв на это произведение.",
             )
         ]
+
+
+# class ReviewSerializer(serializers.ModelSerializer):
+#     author = serializers.SlugRelatedField(
+#         read_only=True,
+#         slug_field='username'
+#     )
+
+#     class Meta:
+#         model = Review
+#         fields = ('id', 'text', 'author', 'score', 'pub_date')
+#         read_only_fields = ('id', 'author', 'pub_date')
+
+#     def validate(self, data):
+#         title_id = self.context['view'].kwargs.get('title_id')
+#         request = self.context['request']
+#         title = get_object_or_404(Title, id=title_id)
+#         if request.method == 'POST':
+#             if Review.objects.filter(
+#                 author=request.user, title=title
+#             ).exists():
+#                 raise ValidationError(
+#                     'Вы ужэе оставили отзыв на это произведение')
+#         return data

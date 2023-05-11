@@ -174,12 +174,12 @@ class Comment(models.Model):
         verbose_name="Отзыв",
         help_text="Отзыв, к которому оставлен комментарий",
     )
-    title = models.ForeignKey(
-        Titles,
-        on_delete=models.CASCADE,
-        related_name="comments",
-        verbose_name="Произведение",
-    )
+    # title = models.ForeignKey(
+    #     Titles,
+    #     on_delete=models.CASCADE,
+    #     related_name="comments",
+    #     verbose_name="Произведение",
+    # )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
