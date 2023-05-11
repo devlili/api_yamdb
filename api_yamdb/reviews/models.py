@@ -68,8 +68,7 @@ class Categories(models.Model):
     )
     slug = models.SlugField(
         max_length=50,
-        # validators='^[-a-zA-Z0-9_]+$',
-        # validators=[ValidateCharacter(regex="^[-a-zA-Z0-9_]+$")],
+        validators=[ValidateCharacter(regex="^[-a-zA-Z0-9_]+$")],
         unique=True,
         verbose_name="Адрес_страницы",
     )
@@ -86,8 +85,7 @@ class Genres(models.Model):
     name = models.CharField(max_length=256, verbose_name="Наименование жанра")
     slug = models.SlugField(
         max_length=50,
-        # validators='^[-a-zA-Z0-9_]+$',
-        #validators=[ValidateCharacter(regex="^[-a-zA-Z0-9_]+$")],
+        validators=[ValidateCharacter(regex="^[-a-zA-Z0-9_]+$")],
         unique=True,
         verbose_name="Адрес_страницы",
     )

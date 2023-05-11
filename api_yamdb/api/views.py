@@ -1,4 +1,4 @@
-from api.permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
+from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
 from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -30,7 +30,7 @@ class GenresViewSet(
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
-    permission_classes = (IsAdminPermission,)
+    #permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         if not Genres.objects.filter(slug=slug).count():
@@ -59,7 +59,6 @@ class TitlesViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("category", "genre", "name", "year")
-    permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update"):
