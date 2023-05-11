@@ -1,23 +1,23 @@
 from django.contrib import admin
-from reviews.models import Categories, Comment, Genres, Review, Titles, User
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
-@admin.register(Genres)
-class GenresAdmin(admin.ModelAdmin):
+@admin.register(Genre)
+class GenreAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "slug")
     search_fields = ("name",)
     list_filter = ("slug",)
 
 
-@admin.register(Categories)
-class CategoriesAdmin(admin.ModelAdmin):
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "slug")
     search_fields = ("name",)
     list_filter = ("slug",)
 
 
-@admin.register(Titles)
-class TitlesAdmin(admin.ModelAdmin):
+@admin.register(Title)
+class TitleAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
         "name",

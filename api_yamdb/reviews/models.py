@@ -51,11 +51,11 @@ class User(AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
-    def ___str__(self) -> str:
+    def __str__(self) -> str:
         return self.username
 
 
-class Categories(models.Model):
+class Category(models.Model):
     name = models.CharField(
         max_length=256, unique=True,
         verbose_name="Наименование категории"
@@ -63,17 +63,23 @@ class Categories(models.Model):
     slug = models.SlugField(
         max_length=50,
         unique=True,
+<<<<<<< HEAD
         verbose_name="Адрес_страницы",
+=======
+        verbose_name="Адрес страницы",
+        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
+>>>>>>> develop
     )
 
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
-    def ___str__(self) -> str:
+    def __str__(self) -> str:
         return self.name
 
 
+<<<<<<< HEAD
 class Genres(models.Model):
     name = models.CharField(
         max_length=256,
@@ -84,17 +90,26 @@ class Genres(models.Model):
         max_length=50,
         unique=True,
         verbose_name="Адрес_страницы",
+=======
+class Genre(models.Model):
+    name = models.CharField(max_length=256, verbose_name="Наименование жанра")
+    slug = models.SlugField(
+        max_length=50,
+        unique=True,
+        verbose_name="Адрес страницы",
+        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
+>>>>>>> develop
     )
 
     class Meta:
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
 
-    def ___str__(self) -> str:
+    def __str__(self) -> str:
         return self.name
 
 
-class Titles(models.Model):
+class Title(models.Model):
     name = models.CharField(
         max_length=256,
         verbose_name="Наименование произведения"
@@ -107,12 +122,12 @@ class Titles(models.Model):
         blank=True
     )
     genre = models.ManyToManyField(
-        Genres,
+        Genre,
         related_name="titles",
         verbose_name="Жанр",
     )
     category = models.ForeignKey(
-        Categories,
+        Category,
         on_delete=models.SET_NULL,
         null=True,
         related_name="titles",
@@ -123,7 +138,7 @@ class Titles(models.Model):
         verbose_name = "Произведение"
         verbose_name_plural = "Произведения"
 
-    def ___str__(self) -> str:
+    def __str__(self) -> str:
         return self.name
 
 
@@ -132,7 +147,7 @@ class Review(models.Model):
 
     text = models.TextField("Текст отзыва")
     title = models.ForeignKey(
-        Titles,
+        Title,
         on_delete=models.CASCADE,
         related_name="reviews",
         verbose_name="Произведение",
@@ -152,9 +167,6 @@ class Review(models.Model):
 
     class Meta:
         constraints = [
-            models.CheckConstraint(
-                check=models.Q(score__range=(1, 10)), name="valid_score"
-            ),
             models.UniqueConstraint(
                 fields=["author", "title"], name="review_once"
             ),
@@ -180,12 +192,15 @@ class Comment(models.Model):
         verbose_name="Отзыв",
         help_text="Отзыв, к которому оставлен комментарий",
     )
+<<<<<<< HEAD
     # title = models.ForeignKey(
     #     Titles,
     #     on_delete=models.CASCADE,
     #     related_name="comments",
     #     verbose_name="Произведение",
     # )
+=======
+>>>>>>> develop
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
