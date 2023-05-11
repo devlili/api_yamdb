@@ -5,8 +5,8 @@ from reviews.models import Categories, Comment, Genres, Review, Titles
 
 
 class GenresSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(max_length=256)
-    slug = serializers.SlugField(max_length=50)
+    # name = serializers.CharField(max_length=256)
+    # slug = serializers.SlugField(max_length=50)
 
     class Meta:
         model = Genres
@@ -15,8 +15,8 @@ class GenresSerializer(serializers.ModelSerializer):
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(max_length=256)
-    slug = serializers.SlugField(max_length=50)
+    # name = serializers.CharField(max_length=256)
+    # slug = serializers.SlugField(max_length=50)
 
     class Meta:
         model = Categories
