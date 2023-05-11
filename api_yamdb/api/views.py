@@ -30,7 +30,7 @@ class GenresViewSet(
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
-    #permission_classes = (IsAdminPermission,)
+    permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         if not Genres.objects.filter(slug=slug).count():
@@ -45,7 +45,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
-    #permission_classes = (IsAdminPermission,)
+    permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -59,7 +59,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("category", "genre", "name", "year")
-    #permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
+    permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update"):
