@@ -7,17 +7,14 @@ from reviews.models import Category, Comment, Genre, Review, Title
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-
         model = Genre
         fields = ("name", "slug")
-        lookup_field = "slug"
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
+    class Meta:
         model = Category
         fields = ("name", "slug")
-        lookup_field = "slug"
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
@@ -64,13 +61,6 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         )
 
 
-    def year_validator(value):
-        if value < 0 or value > timezone.now().year:
-            raise ValidationError(('%(value)s is not a correcrt year!'),
-                                params={'value': value},
-                                )
-    
-    
 class CommentSerializer(serializers.ModelSerializer):
     """Сериализатор для объектов модели Comment."""
 
@@ -109,7 +99,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Вы уже написали отзыв к этому произведению."
             )
-
+        return data
 
     def validate_score(self, value):
         if not 1 <= value <= 10:
@@ -117,4 +107,3 @@ class ReviewSerializer(serializers.ModelSerializer):
                 'Оценкой может быть целое число в диапазоне от 1 до 10.'
             )
         return value
-

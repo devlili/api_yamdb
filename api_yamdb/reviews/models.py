@@ -58,7 +58,6 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-class Category(models.Model):
     name = models.CharField(
         max_length=256,
         unique=True,
@@ -88,15 +87,13 @@ class Genre(models.Model):
         max_length=50,
         unique=True,
         verbose_name="Адрес страницы",
-        verbose_name="Адрес страницы",
-        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
     )
 
     class Meta:
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
 
-      def __str__(self) -> str:
+    def __str__(self) -> str:
         return self.name
 
 
@@ -106,7 +103,7 @@ class Title(models.Model):
         if value < 0 or value > timezone.now().year:
             raise ValidationError(
                 ('%(value)s is not a correcrt year!'), params={'value': value},
-        )
+    )
     name = models.CharField(
         max_length=256,
         verbose_name="Наименование произведения"
@@ -121,12 +118,10 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        Genre,
         related_name="titles",
         verbose_name="Жанр",
     )
     category = models.ForeignKey(
-        Category,
         Category,
         on_delete=models.SET_NULL,
         related_name="titles",
@@ -147,7 +142,6 @@ class Review(models.Model):
 
     text = models.TextField("Текст отзыва")
     title = models.ForeignKey(
-        Title,
         Title,
         on_delete=models.CASCADE,
         related_name="reviews",
