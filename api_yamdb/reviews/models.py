@@ -6,6 +6,8 @@ from django.core.validators import (
     RegexValidator,
 )
 from django.db import models
+from rest_framework.exceptions import ValidationError
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -57,13 +59,14 @@ class User(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(
-        max_length=256, verbose_name="Наименование категории"
+        max_length=256,
+        unique=True,
+        verbose_name="Наименование категории"
     )
     slug = models.SlugField(
         max_length=50,
         unique=True,
-        verbose_name="Адрес страницы",
-        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
+        verbose_name="Адрес_страницы",
     )
 
     class Meta:
@@ -75,12 +78,15 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256, verbose_name="Наименование жанра")
+    name = models.CharField(
+        max_length=256,
+        unique=True,
+        verbose_name="Наименование жанра"
+    )
     slug = models.SlugField(
         max_length=50,
         unique=True,
         verbose_name="Адрес страницы",
-        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
     )
 
     class Meta:
@@ -92,23 +98,33 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(
-        max_length=256, verbose_name="Наименование произведения"
+
+    def year_validator(value):
+        if value < 0 or value > timezone.now().year:
+            raise ValidationError(
+                ('%(value)s is not a correcrt year!'), params={'value': value},
     )
-    year = models.PositiveSmallIntegerField(verbose_name="Год выпуска")
-    description = models.TextField(verbose_name="Описание", blank=True)
+    name = models.CharField(
+        max_length=256,
+        verbose_name="Наименование произведения"
+    )
+    year = models.PositiveSmallIntegerField(
+        validators=[year_validator],
+        verbose_name="Год выпуска"
+    )
+    description = models.TextField(
+        verbose_name="Описание",
+        blank=True
+    )
     genre = models.ManyToManyField(
         Genre,
         related_name="titles",
-        blank=True,
-        null=True,
         verbose_name="Жанр",
     )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         related_name="titles",
-        blank=True,
         null=True,
         verbose_name="Категория",
     )
@@ -171,6 +187,7 @@ class Comment(models.Model):
         verbose_name="Отзыв",
         help_text="Отзыв, к которому оставлен комментарий",
     )
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

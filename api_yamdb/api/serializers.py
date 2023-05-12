@@ -60,14 +60,6 @@ class TitleCreateSerializer(serializers.ModelSerializer):
             "category",
         )
 
-    def validate_year(self, value):
-        current_year = timezone.now().year
-        if not 0 <= value <= current_year:
-            raise serializers.ValidationError(
-                "Проверьте год создания произведения."
-            )
-        return value
-
 
 class CommentSerializer(serializers.ModelSerializer):
     """Сериализатор для объектов модели Comment."""

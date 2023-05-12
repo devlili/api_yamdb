@@ -2,7 +2,6 @@ from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from reviews.models import Category, Comment, Genre, Review, Title
@@ -16,6 +15,7 @@ from .serializers import (
     TitleCreateSerializer,
     TitleReadSerializer,
 )
+from .filters import TitleFilter
 
 
 class GenreViewSet(
@@ -28,7 +28,9 @@ class GenreViewSet(
     serializer_class = GenreSerializer
     lookup_field = "slug"
     filter_backends = (filters.SearchFilter,)
+    permission_classes = (IsAdminPermission,)
     search_fields = ("name",)
+    permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         if not Genre.objects.filter(slug=slug).count():
@@ -40,8 +42,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = "slug"
+    permission_classes = (IsAdminPermission,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
+    permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -53,8 +57,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ("category", "genre", "name", "year")
-    # permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
+    filterset_class = TitleFilter
+    permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update"):
