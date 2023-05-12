@@ -29,6 +29,6 @@ router_v1.register(
 
 urlpatterns = [
     path("v1/", include(router_v1.urls)),
-    path("api/auth/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("v1/auth/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("v1/token/", TokenRefreshView.as_view(), name="token_refresh"),
 ]

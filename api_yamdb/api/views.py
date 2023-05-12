@@ -16,6 +16,7 @@ from .serializers import (
     TitleCreateSerializer,
     TitleReadSerializer,
 )
+from .filters import TitleFilter
 
 
 class GenreViewSet(
@@ -29,6 +30,7 @@ class GenreViewSet(
     lookup_field = "slug"
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
+    permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         if not Genre.objects.filter(slug=slug).count():
@@ -42,6 +44,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     lookup_field = "slug"
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
+    permission_classes = (IsAdminPermission,)
 
     def retrieve(self, request, slug=None):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -53,8 +56,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ("category", "genre", "name", "year")
-    # permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
+    filter_class = TitleFilter
+    permission_classes = (IsAdminPermission, IsAuthenticatedOrReadOnly)
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update"):

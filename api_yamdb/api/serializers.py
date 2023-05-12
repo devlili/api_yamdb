@@ -9,12 +9,14 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ("name", "slug")
+        lookup_field = "slug"
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ("name", "slug")
+        lookup_field = "slug"
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
@@ -60,13 +62,13 @@ class TitleCreateSerializer(serializers.ModelSerializer):
             "category",
         )
 
-    def validate_year(self, value):
-        current_year = timezone.now().year
-        if not 0 <= value <= current_year:
-            raise serializers.ValidationError(
-                "Проверьте год создания произведения."
-            )
-        return value
+    # def validate_year(self, value):
+    #     current_year = timezone.now().year
+    #     if not 0 >= value > current_year:
+    #         raise serializers.ValidationError(
+    #             "Проверьте год создания произведения."
+    #         )
+    #     return value
 
 
 class CommentSerializer(serializers.ModelSerializer):
