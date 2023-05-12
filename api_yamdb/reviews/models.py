@@ -58,6 +58,7 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
+class Category(models.Model):
     name = models.CharField(
         max_length=256,
         unique=True,
@@ -66,8 +67,7 @@ class Category(models.Model):
     slug = models.SlugField(
         max_length=50,
         unique=True,
-        verbose_name="Адрес страницы",
-        validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
+        verbose_name="Адрес_страницы",
     )
 
     class Meta:
@@ -88,6 +88,7 @@ class Genre(models.Model):
         max_length=50,
         unique=True,
         verbose_name="Адрес страницы",
+        verbose_name="Адрес страницы",
         validators=[RegexValidator(regex=r"^[-a-zA-Z0-9_]+$")],
     )
 
@@ -95,7 +96,7 @@ class Genre(models.Model):
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
 
-    def __str__(self) -> str:
+      def __str__(self) -> str:
         return self.name
 
 
@@ -106,7 +107,6 @@ class Title(models.Model):
             raise ValidationError(
                 ('%(value)s is not a correcrt year!'), params={'value': value},
         )
-
     name = models.CharField(
         max_length=256,
         verbose_name="Наименование произведения"
@@ -121,10 +121,12 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
+        Genre,
         related_name="titles",
         verbose_name="Жанр",
     )
     category = models.ForeignKey(
+        Category,
         Category,
         on_delete=models.SET_NULL,
         related_name="titles",
@@ -145,6 +147,7 @@ class Review(models.Model):
 
     text = models.TextField("Текст отзыва")
     title = models.ForeignKey(
+        Title,
         Title,
         on_delete=models.CASCADE,
         related_name="reviews",
@@ -190,6 +193,7 @@ class Comment(models.Model):
         verbose_name="Отзыв",
         help_text="Отзыв, к которому оставлен комментарий",
     )
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
