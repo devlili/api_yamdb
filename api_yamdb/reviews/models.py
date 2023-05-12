@@ -6,8 +6,8 @@ from django.core.validators import (
     RegexValidator,
 )
 from django.db import models
-from rest_framework.exceptions import ValidationError
 from django.utils import timezone
+from rest_framework.exceptions import ValidationError
 
 
 class User(AbstractUser):
@@ -59,9 +59,7 @@ class User(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(
-        max_length=256,
-        unique=True,
-        verbose_name="Наименование категории"
+        max_length=256, unique=True, verbose_name="Наименование категории"
     )
     slug = models.SlugField(
         max_length=50,
@@ -79,9 +77,7 @@ class Category(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(
-        max_length=256,
-        unique=True,
-        verbose_name="Наименование жанра"
+        max_length=256, unique=True, verbose_name="Наименование жанра"
     )
     slug = models.SlugField(
         max_length=50,
@@ -98,24 +94,20 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-
     def year_validator(value):
         if value < 0 or value > timezone.now().year:
             raise ValidationError(
-                ('%(value)s is not a correcrt year!'), params={'value': value},
-    )
+                "%(value)s is not a correcrt year!",
+                params={"value": value},
+            )
+
     name = models.CharField(
-        max_length=256,
-        verbose_name="Наименование произведения"
+        max_length=256, verbose_name="Наименование произведения"
     )
     year = models.PositiveSmallIntegerField(
-        validators=[year_validator],
-        verbose_name="Год выпуска"
+        validators=[year_validator], verbose_name="Год выпуска"
     )
-    description = models.TextField(
-        verbose_name="Описание",
-        blank=True
-    )
+    description = models.TextField(verbose_name="Описание", blank=True)
     genre = models.ManyToManyField(
         Genre,
         related_name="titles",

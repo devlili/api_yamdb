@@ -28,7 +28,6 @@ class GenreViewSet(
     serializer_class = GenreSerializer
     lookup_field = "slug"
     filter_backends = (filters.SearchFilter,)
-    permission_classes = (IsAdminPermission,)
     search_fields = ("name",)
     permission_classes = (IsAdminPermission,)
 
@@ -42,7 +41,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = "slug"
-    permission_classes = (IsAdminPermission,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     permission_classes = (IsAdminPermission,)
