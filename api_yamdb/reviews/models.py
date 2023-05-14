@@ -1,5 +1,4 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
@@ -26,20 +25,26 @@ class User(AbstractUser):
             "Letters, digits and @/./+/-/_ only."
         ),
     )
-    email = models.EmailField("E-mail", max_length=254, unique=True)
+    email = models.EmailField("E-mail", max_length=254)  # Убрал unique=True
     first_name = models.CharField("Имя", max_length=150, blank=True)
     last_name = models.CharField("Фамилия", max_length=150, blank=True)
-    bio = models.TextField("Биография", blank=True)
+    bio = models.TextField("Биография", max_length=200, blank=True)
     role = models.CharField(
         "Статус пользователя",
         choices=CHOICES_ROLE,
         max_length=30,
         default=USER,
     )
+    confirmation_code = models.CharField(
+        'Код подтверждения',
+        default='',
+        max_length=150,
+        null=True
+    )  # Тут БД косячит, дефолтное значение поставил, потом может надо будет убрать
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN
+        return self.role == self.ADMIN or self.is_superuser
 
     @property
     def is_moderator(self):
@@ -53,8 +58,8 @@ class User(AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
-    def __str__(self) -> str:
-        return self.username
+    #  def __str__(self) -> str:  # Вроде не надо
+    #      return self.username
 
 
 class Category(models.Model):
