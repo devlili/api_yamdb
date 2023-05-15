@@ -1,10 +1,18 @@
+import uuid
+
+from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.response import Response
-from reviews.models import Category, Comment, Genre, Review, Title
+from rest_framework_simplejwt.tokens import AccessToken
+
+from api_yamdb.settings import EMAIL
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
 from .serializers import (
@@ -14,6 +22,7 @@ from .serializers import (
     ReviewSerializer,
     TitleCreateSerializer,
     TitleReadSerializer,
+    UserSerializer, SignupSerializer, TokenSerializer
 )
 from .filters import TitleFilter
 
@@ -104,3 +113,53 @@ class ReviewViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             title=self.get_title(),
         )
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAdminPermission, )
+    search_fields = ('username', )
+    lookup_field = 'username'
+    http_method_names = [
+        'get', 'post', 'patch', 'delete', 'head', 'options', 'trace'
+    ]
+
+
+@api_view(['POST'])
+def signup(request):
+    serializer = SignupSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    email = serializer.validated_data['email']
+    username = serializer.validated_data['username']
+    try:
+        user, create = User.objects.get_or_create(
+            username=username,
+            email=email
+        )
+    except IntegrityError:
+        return Response(
+            'Такой логин или email уже существуют',
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    confirmation_code = str(uuid.uuid4())
+    user.confirmation_code = confirmation_code
+    user.save()
+    send_mail(
+        'Код подверждения', confirmation_code,
+        EMAIL, (email, ), fail_silently=False
+    )
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def get_token(request):
+    serializer = TokenSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data['username']
+    confirmation_code = serializer.validated_data['confirmation_code']
+    user_base = get_object_or_404(User, username=username)
+    if confirmation_code == user_base.confirmation_code:
+        token = str(AccessToken.for_user(user_base))
+        return Response({'token': token}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

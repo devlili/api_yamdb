@@ -1,5 +1,14 @@
+import os
 from datetime import timedelta
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+# Из .env берется логин и пароль почты с которой отправляется письмо
+load_dotenv()
+
+EMAIL = os.getenv('EMAIL')
+EMAIL_PASS = os.getenv('EMAIL_PASS')
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -94,10 +103,19 @@ STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+#  SMTP
+secret_token = os.getenv('TOKEN')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = EMAIL
+EMAIL_HOST_PASSWORD = EMAIL_PASS
+EMAIL_PORT = 587
+
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    # ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
