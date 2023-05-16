@@ -105,46 +105,42 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate_score(self, value):
         if not 1 <= value <= 10:
             raise serializers.ValidationError(
-                'Оценкой может быть целое число в диапазоне от 1 до 10.'
+                "Оценкой может быть целое число в диапазоне от 1 до 10."
             )
         return value
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор для объектов модели User."""
+
     email = serializers.EmailField(
-        max_length=254,
-        validators=(validators.MaxLengthValidator(254),)
+        max_length=254, validators=(validators.MaxLengthValidator(254),)
     )
     username = serializers.SlugField(
         max_length=150,
         validators=(
             validators.MaxLengthValidator(150),
-            validators.RegexValidator(r'^[\w.@+-]+\Z')
-        )
+            validators.RegexValidator(r"^[\w.@+-]+\Z"),
+        ),
     )
 
     def validate(self, attrs):
-        if User.objects.filter(email=attrs.get('email')).exists():
-            user = User.objects.get(email=attrs.get('email'))
-            if user.username != attrs.get('username'):
+        if User.objects.filter(email=attrs.get("email")).exists():
+            user = User.objects.get(email=attrs.get("email"))
+            if user.username != attrs.get("username"):
                 raise serializers.ValidationError(
-                    {
-                        "error": "Email is already used!"
-                    }
+                    "Такой адрес электронной почты уже зарегестрирован"
                 )
-        if User.objects.filter(username=attrs.get('username')).exists():
-            user = User.objects.get(username=attrs.get('username'))
-            if user.email != attrs.get('email'):
+        if User.objects.filter(username=attrs.get("username")).exists():
+            user = User.objects.get(username=attrs.get("username"))
+            if user.email != attrs.get("email"):
                 raise serializers.ValidationError(
-                    {
-                        "error": "Username is already used!"
-                    }
+                    "Пользователь с таким именем уже зарегестрирован"
                 )
         return super().validate(attrs)
 
     def validate_username(self, value):
-        if value == 'me':
+        if value == "me":
             raise serializers.ValidationError(
                 'Имя пользователя "me" не разрешено.'
             )
@@ -153,17 +149,17 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'username',
-            'email',
-            'role',
-            'bio',
-            'first_name',
-            'last_name'
+            "username",
+            "email",
+            "role",
+            "bio",
+            "first_name",
+            "last_name",
         )
-        lookup_field = 'username'
+        lookup_field = "username"
         extra_kwargs = {
-            'username': {'required': True},
-            'email': {'required': True},
+            "username": {"required": True},
+            "email": {"required": True},
         }
 
 
@@ -172,15 +168,37 @@ class SignupSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=150, required=True)
 
     def validate_username(self, value):
-        if value == 'me':
+        if value == "me":
             raise serializers.ValidationError(
                 'Имя пользователя "me" не разрешено.'
             )
         return value
 
+    def validate(self, data):
+        username = data.get("username")
+        email = data.get("email")
+        if (
+            User.objects.filter(username=username).exists()
+            and User.objects.get(username=username).email != email
+        ):
+            raise serializers.ValidationError(
+                "Пользователь с таким именем уже зарегестрирован"
+            )
+        if (
+            User.objects.filter(email=email).exists()
+            and User.objects.get(email=email).username != username
+        ):
+            raise serializers.ValidationError(
+                "Такой адрес электронной почты уже зарегестрирован"
+            )
+        return data
+
     class Meta:
         model = User
-        fields = ('username', 'email',)
+        fields = (
+            "username",
+            "email",
+        )
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -189,4 +207,4 @@ class TokenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'confirmation_code')
+        fields = ("username", "confirmation_code")

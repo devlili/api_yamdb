@@ -1,4 +1,4 @@
-from rest_framework import permissions, status
+from rest_framework import permissions
 
 
 class IsAdminPermission(permissions.BasePermission):
