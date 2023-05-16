@@ -1,6 +1,5 @@
 from django.core import validators
 from django.db.models import Avg
-from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from reviews.models import Category, Comment, Genre, Review, Title, User
@@ -130,7 +129,7 @@ class UserSerializer(serializers.ModelSerializer):
             if user.username != attrs.get('username'):
                 raise serializers.ValidationError(
                     {
-                        "error": "Email is already used!"
+                        "error": "Email уже используется"
                     }
                 )
         if User.objects.filter(username=attrs.get('username')).exists():
@@ -138,17 +137,10 @@ class UserSerializer(serializers.ModelSerializer):
             if user.email != attrs.get('email'):
                 raise serializers.ValidationError(
                     {
-                        "error": "Username is already used!"
+                        "error": "Имя пользователя уже используется"
                     }
                 )
         return super().validate(attrs)
-
-    def validate_username(self, value):
-        if value == 'me':
-            raise serializers.ValidationError(
-                'Имя пользователя "me" не разрешено.'
-            )
-        return value
 
     class Meta:
         model = User
@@ -190,3 +182,18 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'confirmation_code')
+
+
+class MeSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role'
+        )
