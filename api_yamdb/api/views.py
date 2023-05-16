@@ -6,15 +6,17 @@ from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
-from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.decorators import api_view, action
+from rest_framework.filters import SearchFilter
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb.settings import EMAIL
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
-from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission
+from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission, IsAdminOrReadOnly, OwnerOrAdmin
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -22,9 +24,40 @@ from .serializers import (
     ReviewSerializer,
     TitleCreateSerializer,
     TitleReadSerializer,
-    UserSerializer, SignupSerializer, TokenSerializer
+    UserSerializer, SignupSerializer, TokenSerializer, MeSerializer
 )
 from .filters import TitleFilter
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = (OwnerOrAdmin, )
+    search_fields = ('username', )
+    lookup_field = 'username'
+    filter_backends = (SearchFilter,)
+    # filterset_fields = 'username'
+    http_method_names = [
+        'get', 'post', 'patch', 'delete', 'head', 'options', 'trace'
+    ]
+
+    @action(
+        methods=['get', 'patch'],
+        detail=False,
+        url_path='me',
+        permission_classes=(IsAuthenticated,)
+    )
+    def get_patch_me(self, request):
+        user = get_object_or_404(User, username=self.request.user)
+        if request.method == 'GET':
+            serializer = MeSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        if request.method == 'PATCH':
+            serializer = MeSerializer(user, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class GenreViewSet(
@@ -115,15 +148,21 @@ class ReviewViewSet(viewsets.ModelViewSet):
         )
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (IsAdminPermission, )
-    search_fields = ('username', )
-    lookup_field = 'username'
-    http_method_names = [
-        'get', 'post', 'patch', 'delete', 'head', 'options', 'trace'
-    ]
+
+
+
+def validate_user_data_and_get_response(username, email):
+    serializer = UserSerializer(data={
+        'username': username,
+        'email': email
+    })
+
+    serializer.validate_username(username)
+    serializer.validate({
+        'username': username,
+        'email': email
+    })
+    serializer.is_valid(True)
 
 
 @api_view(['POST'])
@@ -132,6 +171,7 @@ def signup(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
     username = serializer.validated_data['username']
+    validate_user_data_and_get_response(username, email)
     try:
         user, create = User.objects.get_or_create(
             username=username,
@@ -147,7 +187,7 @@ def signup(request):
     user.save()
     send_mail(
         'Код подверждения', confirmation_code,
-        EMAIL, (email, ), fail_silently=False
+        EMAIL, (email,), fail_silently=False
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
 

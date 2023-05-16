@@ -19,7 +19,8 @@ class User(AbstractUser):
         "Имя пользователя",
         max_length=150,
         unique=True,
-        validators=[RegexValidator(regex=r"^[\w.@+-]+\Z")],
+        #validators = [RegexValidator(regex=r'^[\w.@+-]+\z')],
+        # validators=[RegexValidator(regex=r"^[\w.@+-]+\Z")],
         help_text=(
             "Required. 150 characters or fewer."
             "Letters, digits and @/./+/-/_ only."

@@ -120,7 +120,7 @@ class UserSerializer(serializers.ModelSerializer):
         max_length=150,
         validators=(
             validators.MaxLengthValidator(150),
-            validators.RegexValidator(r'^[\w.@+-]+\Z')
+            validators.RegexValidator(r'^[\\w.@+-]+\\z')
         )
     )
 
@@ -190,3 +190,18 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'confirmation_code')
+
+
+class MeSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role'
+        )
