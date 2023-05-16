@@ -2,7 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
-    RegexValidator,
 )
 from django.db import models
 from django.utils import timezone
@@ -10,55 +9,44 @@ from rest_framework.exceptions import ValidationError
 
 
 class User(AbstractUser):
-    """Модель для пользователя."""
-
-    USER = "user"
-    MODERATOR = "moderator"
-    ADMIN = "admin"
-    CHOICES_ROLE = [(USER, "user"), (MODERATOR, "moderator"), (ADMIN, "admin")]
-
-    username = models.CharField(
-        "Имя пользователя",
-        max_length=150,
-        unique=True,
-        validators=[RegexValidator(regex=r"^[\w.@+-]+\Z")],
-        help_text=(
-            "Required. 150 characters or fewer."
-            "Letters, digits and @/./+/-/_ only."
-        ),
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+    USER_LEVELS = (
+        (USER, "User"),
+        (MODERATOR, "Moderator"),
+        (ADMIN, "Admin")
     )
-    email = models.EmailField("E-mail", max_length=254)
-    first_name = models.CharField("Имя", max_length=150, blank=True)
-    last_name = models.CharField("Фамилия", max_length=150, blank=True)
-    bio = models.TextField("Биография", max_length=200, blank=True)
+
     role = models.CharField(
-        "Статус пользователя",
-        choices=CHOICES_ROLE,
-        max_length=30,
-        default=USER,
+        'Роль',
+        max_length=32,
+        choices=USER_LEVELS,
+        default=USER
     )
+    bio = models.TextField(
+        'О Себе',
+        max_length=256,
+        blank=True
+    )
+    email = models.EmailField(blank=True, max_length=254)
     confirmation_code = models.CharField(
-        "Код подтверждения", default="", max_length=150, null=True
-    )  # Тут БД косячит, дефолтное значение поставил, потом может надо будет убрать
+        'Код подтверждения',
+        max_length=100,
+        null=True
+    )
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN or self.is_superuser
+        return self.role == User.ADMIN or self.is_superuser
 
     @property
     def is_moderator(self):
-        return self.role == self.MODERATOR
+        return self.role == User.MODERATOR
 
     @property
     def is_user(self):
-        return self.role == self.USER
-
-    class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
-
-    def __str__(self) -> str:
-        return self.username
+        return self.role == User.USER
 
 
 class Category(models.Model):
