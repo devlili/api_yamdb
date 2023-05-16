@@ -110,7 +110,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     """Вьюсет для объектов модели Comment."""
 
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAdminModeratorAuthorPermission,)
 
     def get_review(self):
         return get_object_or_404(
@@ -133,7 +133,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     """Вьюсет для объектов модели Review."""
 
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAdminModeratorAuthorPermission,)
 
     def get_title(self):
         return get_object_or_404(Title, id=self.kwargs.get("title_id"))
