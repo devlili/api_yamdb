@@ -10,6 +10,8 @@ from rest_framework.exceptions import ValidationError
 
 
 class User(AbstractUser):
+    """Модель для пользователя."""
+
     USER = "user"
     MODERATOR = "moderator"
     ADMIN = "admin"
@@ -25,7 +27,7 @@ class User(AbstractUser):
             "Letters, digits and @/./+/-/_ only."
         ),
     )
-    email = models.EmailField("E-mail", max_length=254)  # Убрал unique=True
+    email = models.EmailField("E-mail", max_length=254)
     first_name = models.CharField("Имя", max_length=150, blank=True)
     last_name = models.CharField("Фамилия", max_length=150, blank=True)
     bio = models.TextField("Биография", max_length=200, blank=True)
@@ -36,10 +38,7 @@ class User(AbstractUser):
         default=USER,
     )
     confirmation_code = models.CharField(
-        'Код подтверждения',
-        default='',
-        max_length=150,
-        null=True
+        "Код подтверждения", default="", max_length=150, null=True
     )  # Тут БД косячит, дефолтное значение поставил, потом может надо будет убрать
 
     @property
@@ -58,11 +57,13 @@ class User(AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
-    #  def __str__(self) -> str:  # Вроде не надо
-    #      return self.username
+    def __str__(self) -> str:
+        return self.username
 
 
 class Category(models.Model):
+    """Модель для категории."""
+
     name = models.CharField(
         max_length=256, unique=True, verbose_name="Наименование категории"
     )
@@ -81,6 +82,8 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
+    """Модель для жанра."""
+
     name = models.CharField(
         max_length=256, unique=True, verbose_name="Наименование жанра"
     )
@@ -99,6 +102,8 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
+    """Модель для произведения."""
+
     def year_validator(value):
         if value < 0 or value > timezone.now().year:
             raise ValidationError(
@@ -115,6 +120,7 @@ class Title(models.Model):
     description = models.TextField(verbose_name="Описание", blank=True)
     genre = models.ManyToManyField(
         Genre,
+        through="Genre_title",
         related_name="titles",
         verbose_name="Жанр",
     )
@@ -132,6 +138,39 @@ class Title(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class Genre_title(models.Model):
+    """Модель для жанра произведения."""
+
+    title = models.ForeignKey(
+        Title,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="titles",
+        verbose_name="Произведение",
+    )
+    genre = models.ForeignKey(
+        Genre,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="genres",
+        verbose_name="Жанр",
+    )
+
+    class Meta:
+        verbose_name = "Жанр произведения"
+        verbose_name_plural = "Жанры произведения"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["title", "genre"], name="unique_combination"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.title} - {self.genre}"
 
 
 class Review(models.Model):
