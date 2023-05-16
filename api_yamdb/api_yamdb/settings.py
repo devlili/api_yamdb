@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 
 # Из .env берется логин и пароль почты с которой отправляется письмо
 load_dotenv()
-
 EMAIL = os.getenv('EMAIL')
 EMAIL_PASS = os.getenv('EMAIL_PASS')
 
@@ -26,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'api',
     'reviews',
     'django_filters',
@@ -113,9 +113,6 @@ EMAIL_HOST_PASSWORD = EMAIL_PASS
 EMAIL_PORT = 587
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    # ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],

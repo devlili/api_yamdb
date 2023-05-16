@@ -2,21 +2,25 @@ import uuid
 
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import Avg, PositiveSmallIntegerField
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import api_view, action
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly,
+    IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb.settings import EMAIL
-from reviews.models import Category, Comment, Genre, Review, Title, User
+from reviews.models import Category, Genre, Review, Title, User
 
-from .permissions import IsAdminModeratorAuthorPermission, IsAdminPermission, IsAdminOrReadOnly, OwnerOrAdmin
+from .permissions import (
+    IsAdminModeratorAuthorPermission,
+    IsAdminPermission,
+    OwnerOrAdmin)
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -34,10 +38,9 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     pagination_class = PageNumberPagination
     permission_classes = (OwnerOrAdmin, )
+    filter_backends = (SearchFilter, )
     search_fields = ('username', )
     lookup_field = 'username'
-    filter_backends = (SearchFilter,)
-    # filterset_fields = 'username'
     http_method_names = [
         'get', 'post', 'patch', 'delete', 'head', 'options', 'trace'
     ]
@@ -46,7 +49,7 @@ class UserViewSet(viewsets.ModelViewSet):
         methods=['get', 'patch'],
         detail=False,
         url_path='me',
-        permission_classes=(IsAuthenticated,)
+        permission_classes=(IsAuthenticated, )
     )
     def get_patch_me(self, request):
         user = get_object_or_404(User, username=self.request.user)
@@ -148,16 +151,11 @@ class ReviewViewSet(viewsets.ModelViewSet):
         )
 
 
-
-
-
 def validate_user_data_and_get_response(username, email):
     serializer = UserSerializer(data={
         'username': username,
         'email': email
     })
-
-    serializer.validate_username(username)
     serializer.validate({
         'username': username,
         'email': email
