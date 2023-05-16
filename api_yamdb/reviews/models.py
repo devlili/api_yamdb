@@ -176,24 +176,24 @@ class Genre_title(models.Model):
 class Review(models.Model):
     """Модель для отзывов."""
 
-    text = models.TextField("Текст отзыва")
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name="reviews",
         verbose_name="Произведение",
     )
+    text = models.TextField("Текст отзыва")
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="reviews",
         verbose_name="Автор отзыва",
     )
-    pub_date = models.DateTimeField(
-        "Дата публикации", auto_now_add=True, db_index=True
-    )
     score = models.IntegerField(
         "Оценка", validators=[MinValueValidator(1), MaxValueValidator(10)]
+    )
+    pub_date = models.DateTimeField(
+        "Дата публикации", auto_now_add=True, db_index=True
     )
 
     class Meta:
@@ -212,10 +212,6 @@ class Review(models.Model):
 class Comment(models.Model):
     """Модель для комментариев."""
 
-    text = models.TextField("Текст комментария")
-    pub_date = models.DateTimeField(
-        "Дата публикации", auto_now_add=True, db_index=True
-    )
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
@@ -223,12 +219,15 @@ class Comment(models.Model):
         verbose_name="Отзыв",
         help_text="Отзыв, к которому оставлен комментарий",
     )
-
+    text = models.TextField("Текст комментария")
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="comments",
         verbose_name="Автор комментария",
+    )
+    pub_date = models.DateTimeField(
+        "Дата публикации", auto_now_add=True, db_index=True
     )
 
     class Meta:
