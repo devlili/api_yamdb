@@ -1,4 +1,3 @@
-from django.contrib.auth.models import AbstractUser
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
@@ -7,46 +6,7 @@ from django.db import models
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
-
-class User(AbstractUser):
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-    USER_LEVELS = (
-        (USER, "User"),
-        (MODERATOR, "Moderator"),
-        (ADMIN, "Admin")
-    )
-
-    role = models.CharField(
-        'Роль',
-        max_length=32,
-        choices=USER_LEVELS,
-        default=USER
-    )
-    bio = models.TextField(
-        'О Себе',
-        max_length=256,
-        blank=True
-    )
-    email = models.EmailField(blank=True, max_length=254)
-    confirmation_code = models.CharField(
-        'Код подтверждения',
-        max_length=100,
-        null=True
-    )
-
-    @property
-    def is_admin(self):
-        return self.role == User.ADMIN or self.is_superuser
-
-    @property
-    def is_moderator(self):
-        return self.role == User.MODERATOR
-
-    @property
-    def is_user(self):
-        return self.role == User.USER
+from users.models import User
 
 
 class Category(models.Model):
