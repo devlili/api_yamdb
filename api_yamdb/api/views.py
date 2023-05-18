@@ -73,17 +73,18 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class Mixins(
+class ListCreateDeleteViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
-    """Класс применяемых во вьсетах миксинов"""
+    """Вьюсет для получения списка жанров и категорий;
+    создания и удаления жанров и категорий"""
     pass
 
 
-class GenreViewSet(Mixins):
+class GenreViewSet(ListCreateDeleteViewSet):
     """Вьюсет для объектов модели Genre."""
 
     queryset = Genre.objects.all()
@@ -94,7 +95,7 @@ class GenreViewSet(Mixins):
     permission_classes = (IsAdminPermission,)
 
 
-class CategoryViewSet(Mixins):
+class CategoryViewSet(ListCreateDeleteViewSet):
     """Вьюсет для объектов модели Category."""
 
     queryset = Category.objects.all()
