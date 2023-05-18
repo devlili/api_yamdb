@@ -57,8 +57,7 @@ class SignupSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         max_length=150,
         required=True,
-        validators=(
-            validators.RegexValidator(r"^[\w.@+-]+\Z"),)
+        validators=(validators.RegexValidator(r"^[\w.@+-]+\Z"),),
     )
 
     def validate_username(self, value):
@@ -69,12 +68,12 @@ class SignupSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        username = User.objects.filter(username=data['username']).exists()
-        email = User.objects.filter(email=data['email']).exists()
+        username = User.objects.filter(username=data["username"]).exists()
+        email = User.objects.filter(email=data["email"]).exists()
         if email and not username:
-            raise serializers.ValidationError('400')
+            raise serializers.ValidationError("Такой email уже существует")
         if username and not email:
-            raise serializers.ValidationError('400')
+            raise serializers.ValidationError("Такой логин уже существует")
         return data
 
     class Meta:

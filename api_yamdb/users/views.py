@@ -1,24 +1,22 @@
+from uuid import uuid4
+
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action, api_view
 from rest_framework import status, viewsets
+from rest_framework.decorators import action, api_view
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from uuid import uuid4
-
-from users.models import User
+from api.v1.permissions import IsOwnerOrAdmin
 from api_yamdb.settings import EMAIL
+from users.models import User
 from users.serializers import (
     MeSerializer,
     SignupSerializer,
     TokenSerializer,
     UserSerializer,
-)
-from api.permissions import (
-    IsOwnerOrAdmin,
 )
 
 
@@ -62,9 +60,7 @@ def signup(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data["email"]
     username = serializer.validated_data["username"]
-    user, create = User.objects.get_or_create(
-        username=username, email=email
-    )
+    user, create = User.objects.get_or_create(username=username, email=email)
     confirmation_code = str(uuid4())
     user.confirmation_code = confirmation_code
     user.save()
