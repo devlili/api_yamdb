@@ -16,7 +16,6 @@ from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title, User
 
 from api_yamdb.settings import EMAIL
-
 from .filters import TitleFilter
 from .permissions import (
     IsAdminModeratorAuthorPermission,
@@ -74,12 +73,17 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class GenreViewSet(
+class Mixins(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
+    """Класс применяемых во вьсетах миксинов"""
+    pass
+
+
+class GenreViewSet(Mixins):
     """Вьюсет для объектов модели Genre."""
 
     queryset = Genre.objects.all()
@@ -89,13 +93,8 @@ class GenreViewSet(
     search_fields = ("name",)
     permission_classes = (IsAdminPermission,)
 
-    def retrieve(self, request, slug=None):
-        if not Genre.objects.filter(slug=slug).count():
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-        return super().retrieve(self, request, slug)
 
-
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(Mixins):
     """Вьюсет для объектов модели Category."""
 
     queryset = Category.objects.all()
@@ -104,12 +103,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     permission_classes = (IsAdminPermission,)
-
-    def retrieve(self, request, slug=None):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def partial_update(self, request, slug=None):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
