@@ -1,3 +1,6 @@
+from django.urls import include, path
+from rest_framework import routers
+
 from api import views
 from api.views import (
     CategoryViewSet,
@@ -7,8 +10,6 @@ from api.views import (
     TitleViewSet,
     UserViewSet,
 )
-from django.urls import include, path
-from rest_framework import routers
 
 
 app_name = "api"
