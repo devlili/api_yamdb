@@ -12,9 +12,8 @@ from rest_framework_simplejwt.tokens import AccessToken
 from api.v1.permissions import IsOwnerOrAdmin
 from api_yamdb.settings import EMAIL
 from users.models import User
-from users.serializers import (
+from users.v1.serializers import (
     MeSerializer,
-    SignupSerializer,
     TokenSerializer,
     UserSerializer,
 )
@@ -56,7 +55,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @api_view(["POST"])
 def signup(request):
-    serializer = SignupSerializer(data=request.data)
+    serializer = UserSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data["email"]
     username = serializer.validated_data["username"]
