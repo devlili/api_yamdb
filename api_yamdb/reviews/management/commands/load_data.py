@@ -2,6 +2,7 @@ import csv
 
 from django.conf import settings
 from django.core.management import BaseCommand, CommandError
+
 from reviews.models import (
     Category,
     Comment,
