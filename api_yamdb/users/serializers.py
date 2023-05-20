@@ -12,10 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     )
     username = serializers.SlugField(
         max_length=150,
-        validators=(
-            validators.MaxLengthValidator(150),
-            validators.RegexValidator(r"^[\w.@+-]+\Z"),
-        ),
+        validators=(validators.RegexValidator(r"^[\w.@+-]+\Z"),)
     )
 
     def validate(self, attrs):
@@ -33,6 +30,13 @@ class UserSerializer(serializers.ModelSerializer):
                 )
         return super().validate(attrs)
 
+    def validate_username(self, value):
+        if value == "me":
+            raise serializers.ValidationError(
+                'Имя пользователя "me" не разрешено.'
+            )
+        return value
+
     class Meta:
         model = User
         fields = (
@@ -48,40 +52,6 @@ class UserSerializer(serializers.ModelSerializer):
             "username": {"required": True},
             "email": {"required": True},
         }
-
-
-class SignupSerializer(serializers.ModelSerializer):
-    """Сериализатор для регистрации нового пользователя."""
-
-    email = serializers.EmailField(max_length=254, required=True)
-    username = serializers.CharField(
-        max_length=150,
-        required=True,
-        validators=(validators.RegexValidator(r"^[\w.@+-]+\Z"),),
-    )
-
-    def validate_username(self, value):
-        if value == "me":
-            raise serializers.ValidationError(
-                'Имя пользователя "me" не разрешено.'
-            )
-        return value
-
-    def validate(self, data):
-        username = User.objects.filter(username=data["username"]).exists()
-        email = User.objects.filter(email=data["email"]).exists()
-        if email and not username:
-            raise serializers.ValidationError("Такой email уже существует")
-        if username and not email:
-            raise serializers.ValidationError("Такой логин уже существует")
-        return data
-
-    class Meta:
-        model = User
-        fields = (
-            "username",
-            "email",
-        )
 
 
 class TokenSerializer(serializers.ModelSerializer):
