@@ -7,7 +7,7 @@ from reviews.models import (
     Category,
     Comment,
     Genre,
-    Genre_title,
+    GenreTitle,
     Review,
     Title,
     User,
@@ -18,9 +18,9 @@ DICT = {
     Category: "category.csv",
     Genre: "genre.csv",
     Title: "titles.csv",
-    Genre_title: "genre_title.csv",
     Comment: "comments.csv",
     Review: "review.csv",
+    Title.genre.through: "genre_title.csv",
 }
 
 
@@ -36,16 +36,32 @@ class Command(BaseCommand):
                     encoding="utf-8",
                 ) as csv_file:
                     reader = csv.DictReader(csv_file)
-                    objs = []
-                    for row in reader:
-                        for field in ('category', 'author'):
-                            if field in row:
-                                row[f'{field}_id'] = row[field]
-                                del row[field]
-                        objs.append(model(**row))
-                    model.objects.bulk_create(objs)
+                    # for row in reader:
+                    #     for field in ("category", "author"):
+                    #         if field in row:
+                    #             row[f"{field}_id"] = row.pop(field)
+                    #     model_write, create = model.objects.get_or_create(
+                    #         **row
+                    #     )
+                    #     if not create:
+                    #         model_write = model.objects.update(**row)
+                    #         print("Данные обновлены")
+                    #     model_write.save()
+                    # print(
+                    #     f"Данные из файла {base} успешно импортированы"
+                    #     f" в таблицу {model.__name__}."
+                    # )
 
+                    for row in reader:
+                        for field in ("category", "author"):
+                            if field in row:
+                                row[f"{field}_id"] = row.pop(field)
+                        model.objects.create(**row)
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"Данные из файла {base} успешно импортированы"
+                            f" в таблицу {model.__name__}."
+                        )
+                    )
         except Exception as error:
             CommandError(error)
-
-        self.stdout.write(self.style.SUCCESS("Successfully load data"))
