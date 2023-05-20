@@ -1,7 +1,4 @@
-from django.core.validators import (
-    MaxValueValidator,
-    MinValueValidator,
-)
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
@@ -68,7 +65,7 @@ class Title(models.Model):
     description = models.TextField(verbose_name="Описание", blank=True)
     genre = models.ManyToManyField(
         Genre,
-        through="Genre_title",
+        through="GenreTitle",
         related_name="titles",
         verbose_name="Жанр",
     )
@@ -88,7 +85,7 @@ class Title(models.Model):
         return self.name
 
 
-class Genre_title(models.Model):
+class GenreTitle(models.Model):
     """Модель для жанра произведения."""
 
     title = models.ForeignKey(
