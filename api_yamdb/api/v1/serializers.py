@@ -44,7 +44,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
         rating = obj.reviews.aggregate(Avg("score")).get("score__avg")
         if not rating:
             return rating
-        return round(rating, 1)
+        return round(rating)
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
@@ -106,10 +106,3 @@ class ReviewSerializer(serializers.ModelSerializer):
                 "Вы уже написали отзыв к этому произведению."
             )
         return data
-
-    def validate_score(self, value):
-        if not 1 <= value <= 10:
-            raise serializers.ValidationError(
-                "Оценкой может быть целое число в диапазоне от 1 до 10."
-            )
-        return value

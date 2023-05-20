@@ -12,7 +12,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from api.v1.permissions import IsOwnerOrAdmin
 from api_yamdb.settings import EMAIL
 from users.models import User
-from users.serializers import (
+from users.v1.serializers import (
     MeSerializer,
     TokenSerializer,
     UserSerializer,
