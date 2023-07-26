@@ -1,5 +1,5 @@
 [![Python](https://img.shields.io/badge/-Python_3.9.10-464646??style=flat-square&logo=Python)](https://www.python.org/downloads/)
-[![Django](https://img.shields.io/badge/-Django-464646??style=flat-square&logo=Django)](https://www.djangoproject.com/)
+[![Django](https://img.shields.io/badge/-Django_3.2-464646??style=flat-square&logo=Django)](https://www.djangoproject.com/)
 [![Django](https://img.shields.io/badge/-Django_rest_framework_3.12.4-464646??style=flat-square&logo=Django)](https://www.django-rest-framework.org)
 <br>
 # API для YaMDb
